@@ -69,7 +69,21 @@ async function main() {
     let [uuid, token] = await getLoginToken();
 
     let timetable = await getTimetable(uuid, token);
-    parseTimetable(timetable);
+
+    // testing purposes
+    let now = 1762775009000
+
+    for (const data in timetable) {
+        const lesson = timetable[data]
+
+        // remove timetabled slot if lesson has passed
+        if (Date.parse(lesson.end_time) < Date.now()) {
+            delete timetable[data]
+        }
+    }
+
+    console.log(timetable)
+
 }
 
 main()
