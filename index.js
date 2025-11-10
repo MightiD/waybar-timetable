@@ -43,7 +43,6 @@ async function getTimetable(uuid, token) {
         "method": "GET",
         "credentials": "include",
         "body": null,
-        "cookie": `student_session_credentials=%7B%22remember_me%22%3Atrue%2C%22session_id%22%3A%22${token}%22%7D`,
         "referrer": "https://www.classcharts.com/mobile/student",
         "mode": "cors",
     })
