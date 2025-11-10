@@ -71,18 +71,17 @@ async function main() {
     let timetable = await getTimetable(uuid, token);
 
     // testing purposes
-    let now = 1762775009000
+    let now = 1762776000000
 
     for (const data in timetable) {
         const lesson = timetable[data]
 
         // remove timetabled slot if lesson has passed
-        if (Date.parse(lesson.end_time) < Date.now()) {
-            delete timetable[data]
+        if (Date.parse(lesson.end_time) < now) {
+            timetable.splice(data, 1)
         }
     }
 
-    console.log(timetable)
 
 }
 
