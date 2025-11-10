@@ -54,13 +54,13 @@ async function getTimetable(uuid, token) {
     })
     .catch(err => console.error("Fetch error:", err));
 
-    return timetable;
+    return timetable.data;
 }
 
 function parseTimetable(timetable) {
     // loop through each lesson
-    for (const data in timetable.data) {
-        const slot = timetable.data[data]
+    for (const data in timetable) {
+        const slot = timetable[data]
         console.log(`Subject: ${slot.subject_name}\nRoom: ${slot.room_name}\nTeacher: ${slot.teacher_name}\nStart time: ${slot.start_time}\nEnd time: ${slot.end_time}\n`)
     }
 }
