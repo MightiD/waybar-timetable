@@ -61,7 +61,7 @@ function parseTimetable(timetable) {
     // loop through each lesson
     for (const data in timetable.data) {
         const slot = timetable.data[data]
-        console.log(`Subject: ${slot.subject_name}\nRoom: ${slot.room_name}\nTeacher: ${slot.teacher_name}\n`)
+        console.log(`Subject: ${slot.subject_name}\nRoom: ${slot.room_name}\nTeacher: ${slot.teacher_name}\nStart time: ${slot.start_time}\nEnd time: ${slot.end_time}\n`)
     }
 }
 
