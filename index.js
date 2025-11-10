@@ -1,10 +1,9 @@
 let config = require(process.env.HOME + "/.config/timetable/config.json");
 
-let body = `code=${config.code.toUpperCase()}&dob=${config.dob}`
-
 async function getLoginToken() {
-
     let login;
+
+    let body = `code=${config.code.toUpperCase()}&remember=true&dob=${config.dob}`
 
     await fetch("https://www.classcharts.com/apiv2student/login", {
         "headers": {
@@ -15,6 +14,7 @@ async function getLoginToken() {
     })
     .then(res => {
         if (!res.ok) throw new Error("HTTP Error")
+        console.log(res.headers.getSetCookie())
         return res.json();
     })
     .then(data => {
@@ -22,12 +22,52 @@ async function getLoginToken() {
     })
     .catch(err => console.error("Fetch error:", err));
 
-    return login
+    if (login.success != 1) {
+        console.error("Error logging in");
+        process.exit(1);
+    }
+
+    //return login.meta.session_id
+    return [login.data.id, login.meta.session_id];
+}
+
+async function getTimetable(uuid, token) {
+    let timetable;
+
+    await fetch(`https://www.classcharts.com/apiv2student/timetable/${uuid}`, {
+        "headers": {
+            "accept": "application/json, text/javascript, */*; q=0.01",
+            "authorization": `Basic ${token}`,
+            "x-requested-with": "XMLHttpRequest"
+        },
+        "method": "GET",
+        "credentials": "include",
+        "body": null,
+        "cookie": `student_session_credentials=%7B%22remember_me%22%3Atrue%2C%22session_id%22%3A%22${token}%22%7D`,
+        "referrer": "https://www.classcharts.com/mobile/student",
+        "mode": "cors",
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("HTTP Error")
+        return res.json()
+    })
+    .then(data => {
+        timetable = data;
+    })
+    .catch(err => console.error("Fetch error:", err));
+
+    return timetable;
 }
 
 async function main() {
-    let token = await getLoginToken();
-    console.log(token);
+    let [uuid, token] = await getLoginToken();
+
+    console.log(uuid)
+    console.log(token)
+
+    let timetable = await getTimetable(uuid, token);
+
+    console.log(timetable);
 }
 
 main()
