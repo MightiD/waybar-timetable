@@ -88,10 +88,10 @@ async function main() {
 
         if (timeToNextLesson < 600000) {
             // next lesson
-            console.log(`Subject: ${timetable[1].subject_name}\nRoom: ${timetable[1].room_name}\nTeacher: ${timetable[1].teacher_name}\nStart time: ${timetable[1].start_time}\nEnd time: ${timetable[1].end_time}\n`)
+            console.log(`Subject: ${timetable[1].subject_name}\nRoom: ${timetable[1].room_name}\nTeacher: ${timetable[1].teacher_name}\n`)
         } else {
             // current lesson
-            console.log(`Subject: ${timetable[0].subject_name}\nRoom: ${timetable[0].room_name}\nTeacher: ${timetable[0].teacher_name}\nStart time: ${timetable[0].start_time}\nEnd time: ${timetable[0].end_time}\n`)
+            console.log(`Subject: ${timetable[0].subject_name}\nRoom: ${timetable[0].room_name}\nTeacher: ${timetable[0].teacher_name}\n`)
         }
     }
 
