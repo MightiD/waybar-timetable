@@ -14,7 +14,6 @@ async function getLoginToken() {
     })
     .then(res => {
         if (!res.ok) throw new Error("HTTP Error")
-        console.log(res.headers.getSetCookie())
         return res.json();
     })
     .then(data => {
@@ -58,15 +57,19 @@ async function getTimetable(uuid, token) {
     return timetable;
 }
 
+function parseTimetable(timetable) {
+    // loop through each lesson
+    for (const data in timetable.data) {
+        const slot = timetable.data[data]
+        console.log(`Subject: ${slot.subject_name}\nRoom: ${slot.room_name}\nTeacher: ${slot.teacher_name}\n`)
+    }
+}
+
 async function main() {
     let [uuid, token] = await getLoginToken();
 
-    console.log(uuid)
-    console.log(token)
-
     let timetable = await getTimetable(uuid, token);
-
-    console.log(timetable);
+    parseTimetable(timetable);
 }
 
 main()
