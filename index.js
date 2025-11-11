@@ -67,6 +67,7 @@ function parseTimetable(timetable) {
         }
     }
 
+
     if (Object.keys(timetable).length > 1) {
 
         const timeToNextLesson = Date.parse(timetable[1].start_time) - Date.now()
@@ -85,7 +86,7 @@ function parseTimetable(timetable) {
 function printLesson(timetable) {
     let [subject, room, timeToLesson] = parseTimetable(timetable)
 
-    if (timeToLesson == 0) {
+    if (timeToLesson <= 0) {
         // current lesson
         console.log(`${subject} (${room})`)
     } else {
