@@ -77,9 +77,21 @@ function parseTimetable(timetable) {
                     timetable[1].room_name,
                     timeToNextLesson / 1000 / 60]
         }
-
     }
+
     return [timetable[0].subject_name, timetable[0].room_name, 0]
+}
+
+function printLesson(timetable) {
+    let [subject, room, timeToLesson] = parseTimetable(timetable)
+
+    if (timeToLesson == 0) {
+        // current lesson
+        console.log(`${subject} (${room})`)
+    } else {
+        // next lesson
+        console.log(`${subject} (${room}) in ${Math.ceil(timeToLesson)} minutes`)
+    }
 }
 
 async function main() {
@@ -87,14 +99,10 @@ async function main() {
 
     let timetable = await getTimetable(uuid, token);
 
-    let [subject, room, timeToLesson] = parseTimetable(timetable)
+    printLesson(timetable)
 
-    if (timeToLesson == 0) {
-        console.log(`${subject} | ${room}`)
-    } else {
-        console.log(`${subject} | ${room} in ${timeToLesson}`)
-    }
-
+    // once a minute check for the lesson
+    setInterval(() => {printLesson(timetable)}, 60000)
 }
 
 main()
