@@ -58,11 +58,28 @@ async function getTimetable(uuid, token) {
 }
 
 function parseTimetable(timetable) {
-    // loop through each lesson
     for (const data in timetable) {
-        const slot = timetable[data]
-        console.log(`Subject: ${slot.subject_name}\nRoom: ${slot.room_name}\nTeacher: ${slot.teacher_name}\nStart time: ${slot.start_time}\nEnd time: ${slot.end_time}\n`)
+        const lesson = timetable[data]
+
+        // remove timetabled slot if lesson has passed
+        if (Date.parse(lesson.end_time) < Date.now()) {
+            timetable.splice(data, 1)
+        }
     }
+
+    if (Object.keys(timetable).length > 1) {
+
+        const timeToNextLesson = Date.parse(timetable[1].start_time) - Date.now()
+
+        if (timeToNextLesson < 600000) {
+            // next lesson
+            return [timetable[1].subject_name,
+                    timetable[1].room_name,
+                    timeToNextLesson / 1000 / 60]
+        }
+
+    }
+    return [timetable[0].subject_name, timetable[0].room_name, 0]
 }
 
 async function main() {
@@ -70,30 +87,12 @@ async function main() {
 
     let timetable = await getTimetable(uuid, token);
 
-    // testing purposes
-    let now = 1762851360000
+    let [subject, room, timeToLesson] = parseTimetable(timetable)
 
-    for (const data in timetable) {
-        const lesson = timetable[data]
-
-        // remove timetabled slot if lesson has passed
-        if (Date.parse(lesson.end_time + "Z") < Date.now()) {
-            timetable.splice(data, 1)
-        }
-    }
-
-    if (Object.keys(timetable).length > 1) {
-
-        const timeToNextLesson = Date.parse(timetable[1].start_time + "Z") - Date.now()
-
-        if (timeToNextLesson < 600000) {
-            // next lesson
-            console.log("Next lesson")
-            console.log(`Subject: ${timetable[1].subject_name}\nRoom: ${timetable[1].room_name}\nTeacher: ${timetable[1].teacher_name}\nIn ${timeToNextLesson / 1000 / 60} minutes`)
-        } else {
-            // current lesson
-            console.log(`Subject: ${timetable[0].subject_name}\nRoom: ${timetable[0].room_name}\nTeacher: ${timetable[0].teacher_name}\n`)
-        }
+    if (timeToLesson == 0) {
+        console.log(`${subject} | ${room}`)
+    } else {
+        console.log(`${subject} | ${room} in ${timeToLesson}`)
     }
 
 }
