@@ -71,24 +71,25 @@ async function main() {
     let timetable = await getTimetable(uuid, token);
 
     // testing purposes
-    let now = 1762776000000
+    let now = 1762851360000
 
     for (const data in timetable) {
         const lesson = timetable[data]
 
         // remove timetabled slot if lesson has passed
-        if (Date.parse(lesson.end_time) < now) {
+        if (Date.parse(lesson.end_time + "Z") < Date.now()) {
             timetable.splice(data, 1)
         }
     }
 
     if (Object.keys(timetable).length > 1) {
 
-        const timeToNextLesson = Date.parse(timetable[1].start_time) - now
+        const timeToNextLesson = Date.parse(timetable[1].start_time + "Z") - Date.now()
 
         if (timeToNextLesson < 600000) {
             // next lesson
-            console.log(`Subject: ${timetable[1].subject_name}\nRoom: ${timetable[1].room_name}\nTeacher: ${timetable[1].teacher_name}\n`)
+            console.log("Next lesson")
+            console.log(`Subject: ${timetable[1].subject_name}\nRoom: ${timetable[1].room_name}\nTeacher: ${timetable[1].teacher_name}\nIn ${timeToNextLesson / 1000 / 60} minutes`)
         } else {
             // current lesson
             console.log(`Subject: ${timetable[0].subject_name}\nRoom: ${timetable[0].room_name}\nTeacher: ${timetable[0].teacher_name}\n`)
