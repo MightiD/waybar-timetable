@@ -1,5 +1,18 @@
 let config = require(process.env.HOME + "/.config/timetable/config.json");
+const dns = require("dns").promises;
 
+async function checkNetwork(interval = 5000) {
+    while (true) {
+        try {
+            await dns.lookup("google.com");
+            console.log("Network available");
+            return;
+        } catch {
+            console.log("No network connection");
+            await new Promise(resolve => setTimeout(resolve, interval));
+        }
+    }
+}
 async function getLoginToken() {
     let login;
 
@@ -96,6 +109,8 @@ function printLesson(timetable) {
 }
 
 async function main() {
+    await checkNetwork();
+
     let [uuid, token] = await getLoginToken();
 
     let timetable = await getTimetable(uuid, token);
