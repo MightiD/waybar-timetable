@@ -70,7 +70,7 @@ async function getTimetable(uuid, token) {
     return timetable.data;
 }
 
-function parseTimetable(timetable) {
+function currentLesson(timetable) {
     for (const data in timetable) {
         const lesson = timetable[data]
 
@@ -105,7 +105,7 @@ function parseTimetable(timetable) {
 }
 
 function printLesson(timetable, tooltip) {
-    let [subject, room, timeToLesson] = parseTimetable(timetable)
+    let [subject, room, timeToLesson] = currentLesson(timetable)
 
     if (room != "") {
         room = ` (${room})`
@@ -131,7 +131,8 @@ function tooltip(timetable) {
         tooltipReturn = tooltipReturn.concat(`${lesson.subject_name} (${lesson.room_name})\\n`)
     }
 
-    return tooltipReturn
+    // removes trailing \\n from end
+    return tooltipReturn.slice(0, -2);
 }
 
 async function main() {
