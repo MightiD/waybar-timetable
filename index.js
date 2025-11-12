@@ -5,10 +5,10 @@ async function checkNetwork(interval = 5000) {
     while (true) {
         try {
             await dns.lookup("google.com");
-            console.log("Network available");
+            console.log("{\"text\": \"Network available\"}");
             return;
         } catch {
-            console.log("No network connection");
+            console.log("{\"text\": \"No network connection\"}");
             await new Promise(resolve => setTimeout(resolve, interval));
         }
     }
@@ -104,20 +104,34 @@ function parseTimetable(timetable) {
     return [timetable[0].subject_name, timetable[0].room_name, 0]
 }
 
-function printLesson(timetable) {
+function printLesson(timetable, tooltip) {
     let [subject, room, timeToLesson] = parseTimetable(timetable)
 
     if (room != "") {
-        room = `( ${room})`
+        room = ` (${room})`
     }
+
+    let text
 
     if (timeToLesson <= 0) {
         // current lesson
-        console.log(`${subject}${room}`)
+        text = `${subject}${room}`
     } else {
         // next lesson
-        console.log(`${subject}${room} in ${Math.ceil(timeToLesson)} minutes`)
+        text = `${subject}${room} in ${Math.ceil(timeToLesson)} minutes`
     }
+
+    console.log(`{"text": "${text}", "tooltip": "${tooltip}"}`)
+}
+
+function tooltip(timetable) {
+    let tooltipReturn = ""
+    for (const data in timetable) {
+        const lesson = timetable[data];
+        tooltipReturn = tooltipReturn.concat(`${lesson.subject_name} (${lesson.room_name})\\n`)
+    }
+
+    return tooltipReturn
 }
 
 async function main() {
@@ -127,10 +141,12 @@ async function main() {
 
     let timetable = await getTimetable(uuid, token);
 
-    printLesson(timetable)
+    let tooltipText = tooltip(timetable)
+
+    printLesson(timetable, tooltipText)
 
     // once a minute check for the lesson
-    setInterval(() => {printLesson(timetable)}, 30000)
+    setInterval(() => {printLesson(timetable, tooltipText)}, 30000)
 }
 
 main()
