@@ -79,17 +79,25 @@ function parseTimetable(timetable) {
             timetable.splice(data, 1)
         }
     }
+    
+    if (timetable.length > 1) {
 
+        const timeToNextLesson0 = Date.parse(timetable[0].start_time) - Date.now()
+        const timeToNextLesson1 = Date.parse(timetable[1].start_time) - Date.now()
 
-    if (Object.keys(timetable).length > 1) {
-
-        const timeToNextLesson = Date.parse(timetable[1].start_time) - Date.now()
-
-        if (timeToNextLesson < 600000) {
+        // next lesson is <10 mins away
+        if (timeToNextLesson1 < 600000) {
             // next lesson
             return [timetable[1].subject_name,
                     timetable[1].room_name,
-                    timeToNextLesson / 1000 / 60]
+                    timeToNextLesson1 / 1000 / 60]
+        // current lesson is free and next lesson is <10 mins away
+        } else if (timeToNextLesson0 < 600000) {
+            return [timetable[0].subject_name,
+                    timetable[0].room_name,
+                    timeToNextLesson0 / 1000 / 60]
+        } else if (timeToNextLesson0 < Date.now()) {
+            return ["Free Lesson", "", 0]
         }
     }
 
@@ -99,12 +107,16 @@ function parseTimetable(timetable) {
 function printLesson(timetable) {
     let [subject, room, timeToLesson] = parseTimetable(timetable)
 
+    if (room != "") {
+        room = `( ${room})`
+    }
+
     if (timeToLesson <= 0) {
         // current lesson
-        console.log(`${subject} (${room})`)
+        console.log(`${subject}${room}`)
     } else {
         // next lesson
-        console.log(`${subject} (${room}) in ${Math.ceil(timeToLesson)} minutes`)
+        console.log(`${subject}${room} in ${Math.ceil(timeToLesson)} minutes`)
     }
 }
 
@@ -118,7 +130,7 @@ async function main() {
     printLesson(timetable)
 
     // once a minute check for the lesson
-    setInterval(() => {printLesson(timetable)}, 60000)
+    setInterval(() => {printLesson(timetable)}, 30000)
 }
 
 main()
