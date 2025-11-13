@@ -13,6 +13,7 @@ async function checkNetwork(interval = 5000) {
         }
     }
 }
+
 async function getLoginToken() {
     let login;
 
@@ -126,9 +127,17 @@ function printLesson(timetable, tooltip) {
 
 function tooltip(timetable) {
     let tooltipReturn = ""
+
+    const maxLength = Math.max(
+        ...timetable.map(lesson => Math.max(lesson.subject_name.length + lesson.room_name.length)
+    ))
+
     for (const data in timetable) {
-        const lesson = timetable[data];
-        tooltipReturn = tooltipReturn.concat(`${lesson.subject_name} (${lesson.room_name})\\n`)
+        const lesson = timetable[data]
+        const currentLen = lesson.subject_name.length + lesson.room_name.length
+        const diff = maxLength - currentLen
+        let padding = " ".repeat(diff + 1)
+        tooltipReturn = tooltipReturn.concat(`${lesson.subject_name}${padding}(${lesson.room_name})\\n`)
     }
 
     // removes trailing \\n from end
