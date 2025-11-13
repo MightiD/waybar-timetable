@@ -71,6 +71,26 @@ async function getTimetable(uuid, token) {
     return timetable.data;
 }
 
+function parseTimetable(timetable) {
+
+    //begin with removing all the useless items from the arrays
+    for (const data in timetable) {
+        const lesson = timetable[data]
+
+        const subjectName = lesson.subject_name
+        const roomName = lesson.room_name
+        const startTime = lesson.start_time
+        const endTime = lesson.end_time
+
+        timetable[data] = {
+            "subject_name": subjectName,
+            "room_name": roomName,
+            "start_time": startTime,
+            "end_time": endTime,
+        }
+    }
+}
+
 function currentLesson(timetable) {
     for (const data in timetable) {
         const lesson = timetable[data]
@@ -150,6 +170,8 @@ async function main() {
     let [uuid, token] = await getLoginToken();
 
     let timetable = await getTimetable(uuid, token);
+
+    parseTimetable(timetable)
 
     let tooltipText = tooltip(timetable)
 
