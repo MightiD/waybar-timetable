@@ -167,5 +167,4 @@ main()
 
 // TODO:
 // End of day currently displays last lesson
-// Aligning room names in tooltip
 // Adding free lessons between lessons in a parser to allow tooltip to display free lessons
