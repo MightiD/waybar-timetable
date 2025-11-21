@@ -177,8 +177,22 @@ async function main() {
 
     printLesson(timetable, tooltipText)
 
-    // once a minute check for the lesson
-    setInterval(() => {printLesson(timetable, tooltipText)}, 30000)
+    // every 30 sec check for the lesson
+    await setInterval(async () => {
+        if (timetable.length < 1) {
+            // might be new day so need to get current timetable
+            timetable = await getTimetable(uuid, token);
+            parseTimetable(timetable)
+        }
+        // could still be no lessons for the day
+        if (timetable.length < 1) {
+            console.log(`{text: "", tooltip: ""}`)
+        }
+        else {
+            // else print lessons as normal
+            printLesson(timetable, tooltipText)
+        }
+    }, 30000)
 }
 
 main()
